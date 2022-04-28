@@ -36,20 +36,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(JwtConfigurer jwtConfigurer) {
         this.jwtConfigurer = jwtConfigurer;
     }
-    @Bean
-    public AuthenticationEntryPoint delegatingEntryPoint() {
-        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> map = new LinkedHashMap();
-        map.put(new AntPathRequestMatcher("/"), new LoginUrlAuthenticationEntryPoint("/login"));
-        map.put(new AntPathRequestMatcher("/"), new Http403ForbiddenEntryPoint());
-
-        final DelegatingAuthenticationEntryPoint entryPoint = new DelegatingAuthenticationEntryPoint(map);
-        entryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
-
-        return entryPoint;
-    }
+//    @Bean
+//    public AuthenticationEntryPoint delegatingEntryPoint() {
+//        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> map = new LinkedHashMap();
+//        map.put(new AntPathRequestMatcher("/"), new LoginUrlAuthenticationEntryPoint("/login"));
+//        map.put(new AntPathRequestMatcher("/"), new Http403ForbiddenEntryPoint());
+//
+//        final DelegatingAuthenticationEntryPoint entryPoint = new DelegatingAuthenticationEntryPoint(map);
+//        entryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
+//
+//        return entryPoint;
+//    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.exceptionHandling().authenticationEntryPoint(delegatingEntryPoint());
+//        http.exceptionHandling().authenticationEntryPoint(delegatingEntryPoint());
 
         http
                 .csrf().disable()
@@ -59,9 +59,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests()
+                .antMatchers("/api/**").hasAuthority(Permission.ADMIN.getPermission())
 
                 .antMatchers("/adm/**").hasAuthority(Permission.ADMIN.getPermission())
-                .antMatchers("/r").permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers("/api/auth").permitAll()
                 .antMatchers("/login").permitAll()
                 .anyRequest()
                 .authenticated()

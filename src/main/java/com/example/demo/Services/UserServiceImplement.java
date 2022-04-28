@@ -1,5 +1,6 @@
 package com.example.demo.Services;
 
+import com.example.demo.Converters.CardConverters;
 import com.example.demo.Converters.UserConverters;
 import com.example.demo.DTO.UserDTO;
 import com.example.demo.Entiti.Users;
@@ -17,6 +18,7 @@ public class UserServiceImplement implements UserService{
     UserRepository repositori;
 
     UserConverters userConverters = new UserConverters();
+    CardConverters cardConverters = new CardConverters();
 
     @Override
     public void saveUser(UserDTO usersDto) {
@@ -27,8 +29,13 @@ public class UserServiceImplement implements UserService{
 
     @Override
     public UserDTO findByEmail(String email) {
+        Users users = repositori.findByEmail(email);
+        UserDTO userDTO = userConverters.FromUsersInUserDTO(repositori.findByEmail(email));
 
-        return userConverters.FromUsersInUserDTO(repositori.findByEmail(email));
+        if(users.getCard()!=null) {
+            userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
+        }
+        return userDTO;
     }
 
 
@@ -46,7 +53,14 @@ public class UserServiceImplement implements UserService{
         System.out.println(user_list.size());
 
         for(int i=0;i<user_list.size();i++){
-            userDTOList.add(i,userConverters.FromUsersInUserDTO(user_list.get(i)));
+            Users users = user_list.get(i);
+            UserDTO userDTO = userConverters.FromUsersInUserDTO(user_list.get(i));
+
+            if(users.getCard()!=null) {
+                userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
+            }
+
+            userDTOList.add(i,userDTO);
             System.out.println(i);
 
 
@@ -55,7 +69,13 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public UserDTO findById(int id) {
-        return userConverters.FromUsersInUserDTO(repositori.findById(id));
+    public UserDTO findById(int id){
+    Users users = repositori.findById(id);
+    UserDTO userDTO = userConverters.FromUsersInUserDTO(repositori.findById(id));
+
+        if(users.getCard()!=null) {
+        userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
     }
+        return userDTO;
+}
 }

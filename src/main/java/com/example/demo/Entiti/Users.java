@@ -18,7 +18,8 @@ public class Users {
     @Id
     @Column(name = "id")
     private int id;
-
+    @OneToOne(mappedBy = "user")
+    private Card card;
     public Users() {
 
     }
@@ -77,5 +78,13 @@ public class Users {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 }

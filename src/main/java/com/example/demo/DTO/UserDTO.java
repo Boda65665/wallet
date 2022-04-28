@@ -18,7 +18,7 @@ public class UserDTO{
     String email;
     @Size(min = 3,max = 15,message = "username for 5 to 15 symbols")
     String username;
-
+    CardDTO cardDTO;
     public UserDTO(String password, String email, String username) {
         this.password = password;
         this.email = email;
