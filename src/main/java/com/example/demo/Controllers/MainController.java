@@ -3,6 +3,8 @@ package com.example.demo.Controllers;
 import com.example.demo.DTO.CardDTO;
 import com.example.demo.DTO.UserDTO;
 import com.example.demo.JWT.JwtTokenProvider;
+import com.example.demo.Services.CardServise;
+import com.example.demo.Services.CardServiseImp;
 import com.example.demo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,15 +20,20 @@ import java.util.Map;
 @RestController
 public class MainController {
     private final JwtTokenProvider jwtTokenProvider;
+
     public MainController(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
+
     @Autowired
     UserService userService;
+    @Autowired
+    CardServiseImp cardServiseImp;
     @Value("${jwt.headre}")
     private String authorizationHeader;
+
     @PostMapping("new_card")
-    private ResponseEntity<?> new_card(@RequestBody CardDTO cardDTO, HttpServletRequest request,@RequestHeader Map<String, String> headers) {
+    private ResponseEntity<?> new_card(@RequestBody CardDTO cardDTO, HttpServletRequest request, @RequestHeader Map<String, String> headers) {
 
 
         String payment_system = cardDTO.getPayment_system();
@@ -36,6 +43,18 @@ public class MainController {
         System.out.println(headers);
         String email = jwtTokenProvider.getUsername(headers.get("authorization"));
         UserDTO userDTO = userService.findByEmail(email);
+        CardDTO cardDTO1 = cardServiseImp.findByUser(userDTO);
+        if (cardDTO1 != null) {
+            Map<Object, Object> response = new HashMap<>();
+            String error = "1 пользователь может иметь только 1 карту!";
+
+            response.put("error", error);
+
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        System.out.println(userDTO);
         System.out.println("email "+email);
         if (payment_system.equals("MS") || payment_system.equals("MIR") || payment_system.equals("VISA")) {
 
@@ -81,6 +100,9 @@ public class MainController {
         map.put("balance",cardDTO.getBalance());
         map.put("owner_card",cardDTO.getUserDTO().getEmail());
         response.put("response",map);
+        cardServiseImp.cardSave(cardDTO);
+
+
 
         return ResponseEntity.ok(response);
 

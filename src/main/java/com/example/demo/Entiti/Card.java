@@ -28,7 +28,7 @@ public class Card {
     @Column(name = "number")
     private String number;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_user")
     private Users user;
 
