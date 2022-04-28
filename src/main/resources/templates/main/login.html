@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+</head>
+<body>
+<form method="POST" action="/login" th:object="${auth}">
+    <label for="email">Enter email: </label>
+
+    <input type="text" th:field="*{email}"  name ="email" id="email"/>
+
+    <br>
+    <label for="email">Enter password: </label>
+    <input type="text"  th:field="*{password}" name ="password" id="password" autocomplete="off"/>
+    <br>
+    <input type="submit" value="sing in!"/>
+</form>
+Ещё нет аккаунта? <a href="/reg">Зарегестрироваться</a>
+</body>
+</html>
