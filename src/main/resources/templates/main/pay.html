@@ -11,6 +11,9 @@
 <br>
 Хотите совершить перевод?
 <br>
+<p th:text="${err_1}"></p>
+<p th:text="${err_2}"></p>
+
 <form method="post" action="/pay" th:object="${pay}">
     <label>Кому</label>
     <br>
@@ -20,6 +23,10 @@
     <label>Сколько</label>
     <br>
     <input th:field="*{summa}" name="summa">
+    <br>
+    <label>Коммент</label>
+    <br>
+    <input th:field="*{comment}">
     <br>
     <input value="Отправить" type="submit">
 </form>

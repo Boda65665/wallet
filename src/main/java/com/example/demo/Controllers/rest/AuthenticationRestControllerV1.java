@@ -1,4 +1,4 @@
-package com.example.demo.Controllers;
+package com.example.demo.Controllers.rest;
 
 
 import com.example.demo.DTO.UserDTO;
@@ -24,10 +24,7 @@ import org.springframework.validation.BindingResult;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -70,7 +67,7 @@ public class AuthenticationRestControllerV1 {
         } catch (AuthenticationException e) {
             Map<Object, Object> response = new HashMap<>();
             response.put("message","Invalid email/password combination");
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
     @PostMapping("reg")
@@ -82,7 +79,7 @@ public class AuthenticationRestControllerV1 {
 
         try {
             UserDTO user = userService.findByEmail(userDTO.getEmail());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пользователь с таким email уже зарегестрирован!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with this email is already registered\n!");
         }
         catch (NullPointerException err){
             //Validation
@@ -90,10 +87,10 @@ public class AuthenticationRestControllerV1 {
 
                 if(bindingResult.hasFieldErrors("password")){
 
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пароль должен состоять из 5-15 символов!");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password must be 5-15 characters long!");
                 }
                 if(bindingResult.hasFieldErrors("username")){
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username должен состоять из 5-15 символов!");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
                 }
                 if(bindingResult.hasFieldErrors("email")){
 
@@ -115,6 +112,11 @@ public class AuthenticationRestControllerV1 {
 
         }
 
+    }
+    @GetMapping("/login_error")
+    public ResponseEntity<?> login_error(){
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("log in first!");
     }
 
 

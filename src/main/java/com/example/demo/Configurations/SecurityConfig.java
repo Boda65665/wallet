@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -36,20 +38,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(JwtConfigurer jwtConfigurer) {
         this.jwtConfigurer = jwtConfigurer;
     }
-//    @Bean
-//    public AuthenticationEntryPoint delegatingEntryPoint() {
-//        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> map = new LinkedHashMap();
-//        map.put(new AntPathRequestMatcher("/"), new LoginUrlAuthenticationEntryPoint("/login"));
-//        map.put(new AntPathRequestMatcher("/"), new Http403ForbiddenEntryPoint());
-//
-//        final DelegatingAuthenticationEntryPoint entryPoint = new DelegatingAuthenticationEntryPoint(map);
-//        entryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
-//
-//        return entryPoint;
-//    }
+    @Bean
+    public AuthenticationEntryPoint delegatingEntryPoint() {
+        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> map = new LinkedHashMap();
+
+        map.put(new AntPathRequestMatcher("/api/**"), new LoginUrlAuthenticationEntryPoint("/api/auth/login_error"));
+
+
+        map.put(new AntPathRequestMatcher("/"), new LoginUrlAuthenticationEntryPoint("/login"));
+        map.put(new AntPathRequestMatcher("/"),new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+        final DelegatingAuthenticationEntryPoint entryPoint = new DelegatingAuthenticationEntryPoint(map);
+        entryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
+
+        return entryPoint;
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.exceptionHandling().authenticationEntryPoint(delegatingEntryPoint());
+        http.exceptionHandling().authenticationEntryPoint(delegatingEntryPoint());
 
         http
                 .csrf().disable()
@@ -59,12 +64,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests()
-                .antMatchers("/api/**").hasAuthority(Permission.ADMIN.getPermission())
-
-                .antMatchers("/adm/**").hasAuthority(Permission.ADMIN.getPermission())
-                .antMatchers("/**").permitAll()
-                .antMatchers("/api/auth").permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/reg").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
+
+                .antMatchers("/api/bank/**").hasAuthority(Permission.USER.getPermission())
+                .antMatchers("/adm/").hasAuthority(Permission.ADMIN.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()

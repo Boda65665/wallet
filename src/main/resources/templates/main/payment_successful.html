@@ -5,9 +5,17 @@
     <title>Title</title>
 </head>
 <body>
-Платеж успешно отправлен
-Детали платежа
-<span>Адрес получателя: </span> <p th:text="${pay.getFrom_walletDTO.getAdres}"></p>
-<span>Сумма платежа: </span> <p th:text="${pay.getSumma}"></p>
+Платеж успешно отправлен!
+<br>
+Детали платежа:
+<br>
+
+<span>Адрес получателя: </span> <p th:text="${pay.getTo_walletDTO().getAdres()}"></p>
+<br>
+
+<span>Сумма платежа: </span> <p th:text="${pay.getSumma()}"></p>
+<br>
+
+<span th:if="${pay.getComment}!=null">Коммент: </span> <p th:if="${pay.getComment}!=null" th:text="${pay.getComment}"></p>
 </body>
 </html>

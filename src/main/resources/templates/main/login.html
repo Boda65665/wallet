@@ -6,11 +6,16 @@
 </head>
 <body>
 <form method="POST" action="/login" th:object="${auth}">
+    <p style="color: red" th:text="${err_pas_email}"></p>
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Password Error</div>
+
     <label for="email">Enter email: </label>
 
     <input type="text" th:field="*{email}"  name ="email" id="email"/>
 
     <br>
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+
     <label for="email">Enter password: </label>
     <input type="text"  th:field="*{password}" name ="password" id="password" autocomplete="off"/>
     <br>

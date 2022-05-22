@@ -10,15 +10,18 @@ import javax.validation.constraints.Size;
 @Data
 public class UserDTO{
     int id;
+    WalletDTO walletDTO;
     Role role;
+    @NotNull
     @Size(min = 5,max = 15,message = "password for 5 to 15 symbols")
     String password;
+    @NotNull
     @Size(min = 1,message = "min 1 symbol")
     @Email(message = "No valid email")
     String email;
+    @NotNull
     @Size(min = 3,max = 15,message = "username for 5 to 15 symbols")
     String username;
-    CardDTO cardDTO;
     public UserDTO(String password, String email, String username) {
         this.password = password;
         this.email = email;

@@ -1,4 +1,4 @@
-package com.example.demo.Controllers;
+package com.example.demo.Controllers.rest;
 
 import com.example.demo.DTO.PayDTO;
 import com.example.demo.DTO.UserDTO;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.util.ArrayList;
@@ -65,11 +66,11 @@ public class MainController {
         PayDTO payDTO = new PayDTO();
         //Validation
             if(bindingResult.hasFieldErrors("to")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Поле с адресом кошелька не должен быть пустым!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wallet address field must not be empty\n!");
 
             }
             if(bindingResult.hasFieldErrors("summa")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Вы можете отправить от 1 до 100000р!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can send from 1 to 100000r!");
 
 
 
@@ -88,11 +89,11 @@ public class MainController {
 
 
         if (to_adres.equals(walletDTO.getAdres())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Вы не можете отправить деньги самому себе!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot send money to yourself!");
 
         }
         if (summa > walletDTO.getBalance()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("У вас недостаточно средств!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You don't have enough funds!");
         }
 
             try {
@@ -107,23 +108,23 @@ public class MainController {
                 walletServiseImp.save(walletDTO);
                 walletServiseImp.save(to_wallet);
 
-                return ResponseEntity.status(HttpStatus.CREATED).body("Платеж успешно отправлен!");
+                return ResponseEntity.status(HttpStatus.CREATED).body("Payment sent successfully!");
             }
             catch (NullPointerException error){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Кошелька с таким адресом не найдено!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No wallet found with this address!");
             }
 
     }
     @PostMapping("/histoire")
-    public ResponseEntity<?> histoire(@Valid @RequestBody Histoire histoire,BindingResult bindingResult, @RequestHeader Map<String, String> headers){
+    public ResponseEntity<?> histoire(HttpServletRequest request, @Valid @RequestBody Histoire histoire, BindingResult bindingResult, @RequestHeader Map<String, String> headers){
         //Number of Payments
-        String email = jwtTokenProvider.getUsername(headers.get("authorization"));
+        String email = jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(request));
         UserDTO userDTO = userService.findByEmail(email);
         WalletDTO walletDTO = walletServiseImp.findByUserDTO(userDTO);
         List<PayDTO> payDTOS;
         //Validation
         if (bindingResult.hasFieldErrors("rows")){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("rows должен быть равен minimum 1!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("rows must be at least 1!");
 
         }
         int rows = histoire.getRows();
@@ -157,7 +158,7 @@ public class MainController {
             }
         }
         if (rows>payDTOS.size() || rows>100){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Значение rows не должно превышать колво вашег транзикций и не должно быть больше 100!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The rows value must not exceed the number of your transactions and must not exceed 100!");
 
         }
         List<Map<?,?>> payList = new ArrayList<>();
@@ -185,5 +186,6 @@ public class MainController {
 
         return ResponseEntity.ok(payList);
     }
+
 
 }

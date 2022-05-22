@@ -2,6 +2,7 @@ package com.example.demo.Entiti;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 @Table(name = "users")
 @Entity
 public class Users {
@@ -19,7 +20,7 @@ public class Users {
     @Column(name = "id")
     private int id;
     @OneToOne(mappedBy = "user")
-    private Card card;
+    private Wallet wallet;
     public Users() {
 
     }
@@ -80,11 +81,14 @@ public class Users {
         this.role = role;
     }
 
-    public Card getCard() {
-        return card;
+
+
+    public Wallet getWallet() {
+        return wallet;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
     }
+
 }

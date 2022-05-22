@@ -1,7 +1,7 @@
 package com.example.demo.Services;
 
-import com.example.demo.Converters.CardConverters;
 import com.example.demo.Converters.UserConverters;
+import com.example.demo.Converters.WalletConvertrs;
 import com.example.demo.DTO.UserDTO;
 import com.example.demo.Entiti.Users;
 import com.example.demo.Repositories.UserRepository;
@@ -18,8 +18,7 @@ public class UserServiceImplement implements UserService{
     UserRepository repositori;
 
     UserConverters userConverters = new UserConverters();
-    CardConverters cardConverters = new CardConverters();
-
+    WalletConvertrs walletConvertrs = new WalletConvertrs();
     @Override
     public void saveUser(UserDTO usersDto) {
         Users users = new Users();
@@ -31,9 +30,8 @@ public class UserServiceImplement implements UserService{
     public UserDTO findByEmail(String email) {
         Users users = repositori.findByEmail(email);
         UserDTO userDTO = userConverters.FromUsersInUserDTO(repositori.findByEmail(email));
-
-        if(users.getCard()!=null) {
-            userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
+        if(users.getWallet()!=null) {
+            userDTO.setWalletDTO(walletConvertrs.FromWalletInWalletDTO(users.getWallet()));
         }
         return userDTO;
     }
@@ -56,8 +54,9 @@ public class UserServiceImplement implements UserService{
             Users users = user_list.get(i);
             UserDTO userDTO = userConverters.FromUsersInUserDTO(user_list.get(i));
 
-            if(users.getCard()!=null) {
-                userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
+
+            if(users.getWallet()!=null) {
+                userDTO.setWalletDTO(walletConvertrs.FromWalletInWalletDTO(users.getWallet()));
             }
 
             userDTOList.add(i,userDTO);
@@ -73,9 +72,10 @@ public class UserServiceImplement implements UserService{
     Users users = repositori.findById(id);
     UserDTO userDTO = userConverters.FromUsersInUserDTO(repositori.findById(id));
 
-        if(users.getCard()!=null) {
-        userDTO.setCardDTO(cardConverters.CardInCardDTO(users.getCard()));
-    }
+
+        if(users.getWallet()!=null) {
+            userDTO.setWalletDTO(walletConvertrs.FromWalletInWalletDTO(users.getWallet()));
+        }
         return userDTO;
 }
 }

@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>PaymentConfirmation</title>
 </head>
 <body>
-$END$
+<p style="color: red" th:text="${code_str}"></p>
+<p style="color: red" th:text="${incorect_code}"></p>
+Код пдтвержденее:
+
+<form method="post" th:action="${action}" >
+
+    <input type="text" name="code">
+    <input type="submit" value="confirm">
+</form>
+<br>
+<form method="get" action="/PaymentConfirmation">
+    <input type="hidden" name="send_email" value="1" />
+    <input type="hidden" name="id" th:value="${id}" />
+    <input type="submit" value="Отправить еще код">
+
+
+</form>
 </body>
 </html>
