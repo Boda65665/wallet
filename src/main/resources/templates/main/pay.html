@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>wallet</title>
+</head>
+<body>
+Ваш адрес: <span th:text="${wallet.getAdres()}"></span>
+<br>
+Ваш Баланс: <span th:text="${wallet.getBalance()}"></span>
+<br>
+Хотите совершить перевод?
+<br>
+<form method="post" action="/pay" th:object="${pay}">
+    <label>Кому</label>
+    <br>
+    <input th:field="*{to}" name="to">
+
+    <br>
+    <label>Сколько</label>
+    <br>
+    <input th:field="*{summa}" name="summa">
+    <br>
+    <input value="Отправить" type="submit">
+</form>
+</body>
+</html>
